@@ -5,6 +5,9 @@ on:
     branches: ["**"]
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -24,11 +27,37 @@ jobs:
           gradle-version: "8.7"
 
       - name: Build debug APK
-        run: gradle :app:assembleDebug --stacktrace
+        id: build
+        continue-on-error: true
+        run: |
+          set -o pipefail
+          gradle :app:assembleDebug --stacktrace 2>&1 | tee build-output.log
+
+      - name: Save build log to repo
+        if: always()
+        run: |
+          mkdir -p build-logs
+          tail -n 400 build-output.log > build-logs/latest.log
+          {
+            echo "run_id: ${{ github.run_id }}"
+            echo "commit: ${{ github.sha }}"
+            echo "outcome: ${{ steps.build.outcome }}"
+            echo "timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          } > build-logs/latest-meta.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add build-logs/latest.log build-logs/latest-meta.txt
+          git diff --cached --quiet || git commit -m "Update build log [skip ci]"
+          git push
 
       - name: Upload APK artifact
+        if: steps.build.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
           name: MeridianCompass-debug-apk
           path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
+
+      - name: Fail job if build failed
+        if: steps.build.outcome == 'failure'
+        run: exit 1
