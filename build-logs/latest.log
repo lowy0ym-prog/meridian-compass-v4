@@ -14,7 +14,6 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
@@ -22,27 +21,73 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
+> Task :app:processDebugManifestForPackage
+> Task :app:checkDebugDuplicateClasses
 > Task :app:mergeDebugStartupProfile
 > Task :app:mergeDebugJniLibFolders
-> Task :app:checkDebugDuplicateClasses
+> Task :app:mergeLibDexDebug
 > Task :app:mergeDebugNativeLibs
 > Task :app:processDebugResources
-> Task :app:mergeLibDexDebug
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
 
 > Task :app:stripDebugDebugSymbols
 Unable to strip the following libraries, packaging them as they are: libdatastore_shared_counter.so.
 
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
-> Task :app:kspDebugKotlin
 > Task :app:mergeExtDexDebug
+> Task :app:kspDebugKotlin
 
 > Task :app:compileDebugKotlin FAILED
-e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/MainActivity.kt:304:73 Unresolved reference: Place
-e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/MainActivity.kt:310:73 Unresolved reference: Explore
-e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/MainActivity.kt:316:73 Unresolved reference: Settings
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791343815026.json
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:32:19 Platform declaration clash: The following declarations have the same JVM signature (setTrueNorth(Z)V):
+    fun `<set-trueNorth>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setTrueNorth(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:33:24 Platform declaration clash: The following declarations have the same JVM signature (setMetricDistance(Z)V):
+    fun `<set-metricDistance>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setMetricDistance(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:34:24 Platform declaration clash: The following declarations have the same JVM signature (setMetricAltitude(Z)V):
+    fun `<set-metricAltitude>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setMetricAltitude(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:35:17 Platform declaration clash: The following declarations have the same JVM signature (setHaptics(Z)V):
+    fun `<set-haptics>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setHaptics(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:36:21 Platform declaration clash: The following declarations have the same JVM signature (setMajorStrong(Z)V):
+    fun `<set-majorStrong>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setMajorStrong(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:37:17 Platform declaration clash: The following declarations have the same JVM signature (setStepDeg(I)V):
+    fun `<set-stepDeg>`(`<set-?>`: Int): Unit defined in com.meridian.compass.AppSettings
+    fun setStepDeg(v: Int): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:38:15 Platform declaration clash: The following declarations have the same JVM signature (setTheme(I)V):
+    fun `<set-theme>`(`<set-?>`: Int): Unit defined in com.meridian.compass.AppSettings
+    fun setTheme(v: Int): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:39:16 Platform declaration clash: The following declarations have the same JVM signature (setKeepOn(Z)V):
+    fun `<set-keepOn>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setKeepOn(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:41:5 Platform declaration clash: The following declarations have the same JVM signature (setTrueNorth(Z)V):
+    fun `<set-trueNorth>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setTrueNorth(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:42:5 Platform declaration clash: The following declarations have the same JVM signature (setMetricDistance(Z)V):
+    fun `<set-metricDistance>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setMetricDistance(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:43:5 Platform declaration clash: The following declarations have the same JVM signature (setMetricAltitude(Z)V):
+    fun `<set-metricAltitude>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setMetricAltitude(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:44:5 Platform declaration clash: The following declarations have the same JVM signature (setHaptics(Z)V):
+    fun `<set-haptics>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setHaptics(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:45:5 Platform declaration clash: The following declarations have the same JVM signature (setMajorStrong(Z)V):
+    fun `<set-majorStrong>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setMajorStrong(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:46:5 Platform declaration clash: The following declarations have the same JVM signature (setStepDeg(I)V):
+    fun `<set-stepDeg>`(`<set-?>`: Int): Unit defined in com.meridian.compass.AppSettings
+    fun setStepDeg(v: Int): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:47:5 Platform declaration clash: The following declarations have the same JVM signature (setTheme(I)V):
+    fun `<set-theme>`(`<set-?>`: Int): Unit defined in com.meridian.compass.AppSettings
+    fun setTheme(v: Int): Unit defined in com.meridian.compass.AppSettings
+e: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/Data.kt:48:5 Platform declaration clash: The following declarations have the same JVM signature (setKeepOn(Z)V):
+    fun `<set-keepOn>`(`<set-?>`: Boolean): Unit defined in com.meridian.compass.AppSettings
+    fun setKeepOn(v: Boolean): Unit defined in com.meridian.compass.AppSettings
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791344041487.json
 
 FAILURE: Build failed with an exception.
 
@@ -251,5 +296,5 @@ Caused by: org.jetbrains.kotlin.gradle.tasks.CompilationErrorException: Compilat
 	... 2 more
 
 
-BUILD FAILED in 42s
+BUILD FAILED in 55s
 31 actionable tasks: 31 executed
