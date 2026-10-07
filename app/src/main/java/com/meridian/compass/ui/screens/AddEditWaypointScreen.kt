@@ -122,7 +122,7 @@ fun AddEditWaypointScreen(
             Spacer(Modifier.height(20.dp))
             Text("Photo", style = MaterialTheme.typography.titleMedium, color = MaterialTheme.colorScheme.onBackground)
             Spacer(Modifier.height(8.dp))
-            PhotoPicker(bitmap = previewBitmap, onTakePhoto = { cameraLauncher.launch() })
+            PhotoPicker(bitmap = previewBitmap, onTakePhoto = { cameraLauncher.launch(null) })
 
             Spacer(Modifier.height(20.dp))
             OutlinedTextField(
