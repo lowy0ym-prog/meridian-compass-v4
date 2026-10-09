@@ -8,16 +8,16 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
-> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
+> Task :app:mergeDebugResources
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
-> Task :app:processDebugManifestForPackage
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
@@ -67,7 +67,7 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791575382941.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791575879844.json
 
-BUILD SUCCESSFUL in 1m 1s
+BUILD SUCCESSFUL in 55s
 39 actionable tasks: 39 executed
