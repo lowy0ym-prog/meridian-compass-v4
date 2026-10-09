@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.filled.Explore
@@ -287,7 +288,7 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
 private fun PillBottomNav(currentRoute: String, onNavigate: (String) -> Unit) {
     androidx.compose.foundation.layout.Box(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(bottom = 20.dp),
         contentAlignment = Alignment.BottomCenter
     ) {
