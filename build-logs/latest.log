@@ -8,10 +8,10 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
+> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
 > Task :app:parseDebugLocalResources
-> Task :app:mergeDebugResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:processDebugManifestForPackage
@@ -44,8 +44,13 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/astronomy/SunMoonCalculator.kt:142:13 Variable 'decRad' is never used
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/astronomy/SunMoonCalculator.kt:226:13 Variable 'moonArgLatitude' is never used
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/sensors/OrientationSensorManager.kt:103:38 'getter for defaultDisplay: Display!' is deprecated. Deprecated in Java
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/components/CompassDial.kt:59:5 Parameter 'ringColor' is never used
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/components/CompassDial.kt:60:5 Parameter 'dialBackground' is never used
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/components/CompassDial.kt:62:5 Parameter 'accentColor' is never used
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/components/CompassDial.kt:189:67 Parameter 's' is never used
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/components/CompassDial.kt:238:72 Parameter 's' is never used
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/AddEditWaypointScreen.kt:89:70 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
-w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/CompassScreen.kt:221:35 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/CompassScreen.kt:218:35 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/RecordTrailScreen.kt:59:85 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:51:85 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:66:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
@@ -67,7 +72,7 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791694410129.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791694503228.json
 
-BUILD SUCCESSFUL in 57s
+BUILD SUCCESSFUL in 58s
 39 actionable tasks: 39 executed
