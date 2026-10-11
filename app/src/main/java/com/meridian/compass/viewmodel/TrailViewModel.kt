@@ -9,6 +9,7 @@ import com.meridian.compass.data.TrailPoint
 import com.meridian.compass.location.LocationRepository
 import com.meridian.compass.util.Bearing
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +33,8 @@ class TrailViewModel(application: Application) : AndroidViewModel(application) {
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     private var collectJob: Job? = null
+
+    fun pointsFor(trailId: Long): Flow<List<TrailPoint>> = app.trailRepository.observePoints(trailId)
 
     fun startRecording(name: String) {
         if (_activeTrail.value != null) return
@@ -75,6 +78,8 @@ class TrailViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             app.trailRepository.finishTrail(trail, _distanceMeters.value)
             _activeTrail.value = null
+            _recordedPoints.value = emptyList()
+            _distanceMeters.value = 0.0
         }
     }
 
