@@ -83,7 +83,7 @@ fun CompassScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(PaddingValues(horizontal = 20.dp, vertical = 16.dp))
+                .padding(PaddingValues(horizontal = 12.dp, vertical = 16.dp))
         ) {
             TopBar(uiState.settings.northReference, onToggleNorthReference, onOpenWaypoints, onOpenSettings)
 
@@ -115,14 +115,6 @@ fun CompassScreen(
                 }
                 Spacer(Modifier.height(14.dp))
             }
-
-            HeadingReadout(
-                headingDegrees = uiState.displayHeadingDegrees,
-                northReference = uiState.settings.northReference,
-                onToggleNorthReference = onToggleNorthReference
-            )
-
-            Spacer(Modifier.height(4.dp))
 
             val markers = buildList {
                 uiState.sunInfo?.let {
@@ -159,7 +151,12 @@ fun CompassScreen(
                 dialBackground = MaterialTheme.colorScheme.surface,
                 textColor = onBg,
                 accentColor = accent,
-                modifier = Modifier.padding(vertical = 8.dp)
+                modifier = Modifier
+            )
+
+            ReferenceChip(
+                northReference = uiState.settings.northReference,
+                onToggleNorthReference = onToggleNorthReference
             )
 
             Spacer(Modifier.height(10.dp))
@@ -370,21 +367,8 @@ private fun ArrivalCelebrationCard(name: String, photoPath: String?, onClear: ()
 }
 
 @Composable
-private fun HeadingReadout(headingDegrees: Float, northReference: NorthReference, onToggleNorthReference: () -> Unit) {
-    val pointLabel = Bearing.compassPointLabel(headingDegrees.toDouble())
+private fun ReferenceChip(northReference: NorthReference, onToggleNorthReference: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-        Text(
-            text = "${headingDegrees.toInt()}°",
-            style = MaterialTheme.typography.displayLarge,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            text = pointLabel,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.75f)
-        )
-        Spacer(Modifier.height(6.dp))
         Surface(
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
             shape = RoundedCornerShape(20.dp),
@@ -470,7 +454,7 @@ private fun SunMoonRow(sun: SunInfo?, moon: MoonInfo?) {
 
 @Composable
 private fun rememberTimeFormatter(): SimpleDateFormat =
-    remember { SimpleDateFormat("HH:mm", Locale.getDefault()) }
+    remember { SimpleDateFormat("h:mm a", Locale.getDefault()) }
 
 private fun formatCoordinate(value: Double, isLat: Boolean): String {
     val hemi = if (isLat) (if (value >= 0) "N" else "S") else (if (value >= 0) "E" else "W")

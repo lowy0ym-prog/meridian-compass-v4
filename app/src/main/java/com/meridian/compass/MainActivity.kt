@@ -8,18 +8,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.filled.Explore
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -27,17 +19,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.meridian.compass.settings.ThemePreference
 import com.meridian.compass.ui.screens.AddEditWaypointScreen
 import com.meridian.compass.ui.screens.CompassScreen
@@ -146,30 +133,11 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
     var editingWaypointId by remember { mutableStateOf<Long?>(null) }
     var pendingPickedLocation by remember { mutableStateOf<Pair<Double, Double>?>(null) }
 
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = backStackEntry?.destination?.route
-    val tabRoutes = setOf("compass", "waypoints", "settings")
-
-    androidx.compose.material3.Scaffold(
-        bottomBar = {
-            if (currentRoute in tabRoutes) {
-                PillBottomNav(
-                    currentRoute = currentRoute ?: "compass",
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-        }
-    ) { scaffoldPadding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         NavHost(
             navController = navController,
             startDestination = "compass",
-            modifier = Modifier.padding(scaffoldPadding)
+            modifier = Modifier.fillMaxSize()
         ) {
             composable("compass") {
                 CompassScreen(
@@ -195,7 +163,7 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
                     currentLat = uiState.location.latitude,
                     currentLon = uiState.location.longitude,
                     distanceUnit = uiState.settings.distanceUnit,
-                    onBack = { navController.navigate("compass") { launchSingleTop = true } },
+                    onBack = { navController.popBackStack() },
                     onAddNew = {
                         editingWaypointId = null
                         pendingPickedLocation = null
@@ -211,7 +179,7 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
                     onDelete = { wp -> waypointViewModel.delete(wp) },
                     onSelect = { wp ->
                         compassViewModel.selectWaypoint(wp)
-                        navController.navigate("compass") { launchSingleTop = true }
+                        navController.popBackStack("compass", false)
                     }
                 )
             }
@@ -269,7 +237,7 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
             composable("settings") {
                 SettingsScreen(
                     settings = uiState.settings,
-                    onBack = { navController.navigate("compass") { launchSingleTop = true } },
+                    onBack = { navController.popBackStack() },
                     onNorthReferenceChange = { coroutineScope.launch { app.settingsRepository.setNorthReference(it) } },
                     onDistanceUnitChange = { coroutineScope.launch { app.settingsRepository.setDistanceUnit(it) } },
                     onAltitudeUnitChange = { coroutineScope.launch { app.settingsRepository.setAltitudeUnit(it) } },
@@ -280,70 +248,6 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
                     onPreciseDistanceChange = { coroutineScope.launch { app.settingsRepository.setPreciseDistance(it) } }
                 )
             }
-        }
-    }
-}
-
-@androidx.compose.runtime.Composable
-private fun PillBottomNav(currentRoute: String, onNavigate: (String) -> Unit) {
-    androidx.compose.foundation.layout.Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 20.dp),
-        contentAlignment = Alignment.BottomCenter
-    ) {
-        androidx.compose.material3.Surface(
-            color = MaterialTheme.colorScheme.surface,
-            shape = androidx.compose.foundation.shape.RoundedCornerShape(32.dp),
-            shadowElevation = 8.dp,
-            modifier = Modifier.padding(horizontal = 48.dp)
-        ) {
-            androidx.compose.foundation.layout.Row(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp)
-            ) {
-                PillNavItem(
-                    selected = currentRoute == "waypoints",
-                    icon = androidx.compose.material.icons.Icons.Filled.Place,
-                    contentDescription = "Markers",
-                    onClick = { onNavigate("waypoints") }
-                )
-                PillNavItem(
-                    selected = currentRoute == "compass",
-                    icon = androidx.compose.material.icons.Icons.Filled.Explore,
-                    contentDescription = "Compass",
-                    onClick = { onNavigate("compass") }
-                )
-                PillNavItem(
-                    selected = currentRoute == "settings",
-                    icon = androidx.compose.material.icons.Icons.Filled.Settings,
-                    contentDescription = "Settings",
-                    onClick = { onNavigate("settings") }
-                )
-            }
-        }
-    }
-}
-
-@androidx.compose.runtime.Composable
-private fun PillNavItem(
-    selected: Boolean,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    contentDescription: String,
-    onClick: () -> Unit
-) {
-    val bg = if (selected) MaterialTheme.colorScheme.error else androidx.compose.ui.graphics.Color.Transparent
-    val tint = if (selected) androidx.compose.ui.graphics.Color.White else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-    androidx.compose.material3.Surface(
-        color = bg,
-        shape = androidx.compose.foundation.shape.CircleShape,
-        modifier = Modifier
-            .size(52.dp)
-            .clickable(onClick = onClick)
-    ) {
-        androidx.compose.foundation.layout.Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
-            androidx.compose.material3.Icon(icon, contentDescription = contentDescription, tint = tint)
         }
     }
 }
