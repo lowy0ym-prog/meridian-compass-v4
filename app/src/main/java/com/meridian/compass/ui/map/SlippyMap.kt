@@ -87,25 +87,26 @@ data class MapLine(
     val color: Color = Color(0xFFFF7A00)
 )
 
-enum class MapStyle(val attribution: String, val dark: Boolean) {
-    STREET("© OpenStreetMap contributors © CARTO", false),
-    SATELLITE("Imagery © Esri, Maxar, Earthstar Geographics", true),
-    DARK("© OpenStreetMap contributors © CARTO", true);
+/** Map styles; tiles come from Esri's public ArcGIS tile servers (no account or key needed). */
+enum class MapStyle(val attribution: String, val dark: Boolean, val maxZoom: Int) {
+    STREET("Tiles © Esri — Source: Esri, HERE, Garmin, OpenStreetMap contributors", false, 19),
+    TOPO("Tiles © Esri — Source: Esri, HERE, Garmin, USGS, NPS", false, 19),
+    SATELLITE("Imagery © Esri, Maxar, Earthstar Geographics", true, 19),
+    DARK("Tiles © Esri — Source: Esri, HERE, Garmin", true, 16);
 
-    fun url(z: Int, x: Int, y: Int): String = when (this) {
-        STREET -> {
-            val s = listOf("a", "b", "c", "d")[(x + y) % 4]
-            "https://$s.basemaps.cartocdn.com/rastertiles/voyager/$z/$x/$y.png"
+    fun url(z: Int, x: Int, y: Int): String {
+        val service = when (this) {
+            STREET -> "World_Street_Map"
+            TOPO -> "World_Topo_Map"
+            SATELLITE -> "World_Imagery"
+            DARK -> "Canvas/World_Dark_Gray_Base"
         }
-        SATELLITE -> "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/$z/$y/$x"
-        DARK -> {
-            val s = listOf("a", "b", "c", "d")[(x + y) % 4]
-            "https://$s.basemaps.cartocdn.com/dark_all/$z/$x/$y.png"
-        }
+        return "https://server.arcgisonline.com/ArcGIS/rest/services/$service/MapServer/tile/$z/$y/$x"
     }
 
     fun next(): MapStyle = when (this) {
-        STREET -> SATELLITE
+        STREET -> TOPO
+        TOPO -> SATELLITE
         SATELLITE -> DARK
         DARK -> STREET
     }
@@ -172,8 +173,8 @@ internal object TileStore {
     @Volatile private var dir: File? = null
 
     fun init(cacheDir: File) {
-        // v2: fresh folder so earlier blocked/placeholder tiles are never reused
-        dir = File(cacheDir, "map_tiles_v2")
+        // v3: fresh folder so earlier blocked/placeholder tiles are never reused
+        dir = File(cacheDir, "map_tiles_v3")
     }
 
     private fun key(s: MapStyle, z: Int, x: Int, y: Int) = "${s.name}/$z/$x/$y"
@@ -299,7 +300,7 @@ fun SlippyMap(
         }
     }
 
-    val tz = Math.round(state.zoom).coerceIn(2, 19)
+    val tz = Math.round(state.zoom).coerceIn(2, mapStyle.maxZoom)
     val tiles = visibleTiles(state.cx, state.cy, state.zoom, tz, viewSize)
 
     LaunchedEffect(mapStyle, tiles) {
@@ -356,7 +357,7 @@ fun SlippyMap(
 
             // Tiles
             val z = state.zoom
-            val level = Math.round(z).coerceIn(2, 19)
+            val level = Math.round(z).coerceIn(2, mapStyle.maxZoom)
             val n = 1 shl level
             val tilePx = (256.0 * 2.0.pow((z - level).toDouble())).toFloat()
             val txc = state.cx * n
