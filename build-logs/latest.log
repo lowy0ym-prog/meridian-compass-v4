@@ -10,8 +10,8 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:packageDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:mergeDebugResources
 > Task :app:parseDebugLocalResources
+> Task :app:mergeDebugResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
 > Task :app:processDebugManifestForPackage
@@ -56,7 +56,7 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:111:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:115:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:125:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
-w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/WaypointListScreen.kt:104:43 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/WaypointListScreen.kt:83:43 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
 
 > Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
@@ -67,7 +67,7 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791575879844.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791694410129.json
 
-BUILD SUCCESSFUL in 55s
+BUILD SUCCESSFUL in 57s
 39 actionable tasks: 39 executed
