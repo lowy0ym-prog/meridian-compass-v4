@@ -8,15 +8,15 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:mapDebugSourceSetPaths
 > Task :app:generateDebugResources
 > Task :app:packageDebugResources
+> Task :app:mergeDebugResources
 > Task :app:createDebugCompatibleScreenManifests
 > Task :app:extractDeepLinksDebug
-> Task :app:mergeDebugResources
 > Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
 > Task :app:javaPreCompileDebug
 > Task :app:mergeDebugShaders
+> Task :app:processDebugManifestForPackage
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
@@ -25,8 +25,8 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:mergeDebugStartupProfile
 > Task :app:mergeDebugJniLibFolders
 > Task :app:checkDebugDuplicateClasses
-> Task :app:processDebugResources
 > Task :app:mergeDebugNativeLibs
+> Task :app:processDebugResources
 > Task :app:mergeLibDexDebug
 
 > Task :app:stripDebugDebugSymbols
@@ -51,7 +51,7 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/components/CompassDial.kt:238:72 Parameter 's' is never used
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/AddEditWaypointScreen.kt:89:70 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/CompassScreen.kt:218:35 'List: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.List
-w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/RecordTrailScreen.kt:59:85 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/RecordTrailScreen.kt:74:85 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:51:85 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:66:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:72:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
@@ -61,7 +61,9 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:111:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:115:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
 w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/SettingsScreen.kt:125:13 'Divider(Modifier = ..., Dp = ..., Color = ...): Unit' is deprecated. Renamed to HorizontalDivider
-w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/WaypointListScreen.kt:83:43 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/TrailsScreen.kt:94:85 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/TrailsScreen.kt:188:85 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
+w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main/java/com/meridian/compass/ui/screens/WaypointListScreen.kt:85:43 'ArrowBack: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.ArrowBack
 
 > Task :app:compileDebugJavaWithJavac
 > Task :app:dexBuilderDebug
@@ -72,7 +74,7 @@ w: file:///home/runner/work/meridian-compass-v4/meridian-compass-v4/app/src/main
 > Task :app:packageDebug
 > Task :app:createDebugApkListingFileRedirect
 > Task :app:assembleDebug
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791698542097.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/build-1791725607089.json
 
-BUILD SUCCESSFUL in 1m 5s
+BUILD SUCCESSFUL in 1m 2s
 39 actionable tasks: 39 executed
