@@ -3,7 +3,6 @@ package com.meridian.compass.ui.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,13 +22,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Map
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -40,7 +37,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -74,26 +70,9 @@ fun WaypointListScreen(
     var fabExpanded by remember { mutableStateOf(false) }
     var searchOpen by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
-    var showRallyInfo by remember { mutableStateOf(false) }
 
     val visibleWaypoints = if (searchQuery.isBlank()) waypoints
         else waypoints.filter { it.name.contains(searchQuery, ignoreCase = true) }
-
-    if (showRallyInfo) {
-        AlertDialog(
-            onDismissRequest = { showRallyInfo = false },
-            title = { Text("Rally isn't available") },
-            text = {
-                Text(
-                    "Rally shares live location between devices, which needs an internet " +
-                        "connection and an active session on a server. This app is built to work " +
-                        "fully offline with no account and no data leaving your phone, so live " +
-                        "location sharing isn't included."
-                )
-            },
-            confirmButton = { TextButton(onClick = { showRallyInfo = false }) { Text("Got it") } }
-        )
-    }
 
     Scaffold(
         topBar = {
@@ -111,7 +90,6 @@ fun WaypointListScreen(
                 expanded = fabExpanded,
                 onToggle = { fabExpanded = !fabExpanded },
                 onSearch = { searchOpen = !searchOpen; fabExpanded = false },
-                onRally = { showRallyInfo = true; fabExpanded = false },
                 onRecordTrail = { onRecordTrail(); fabExpanded = false },
                 onMarkOnMap = { onMarkOnMap(); fabExpanded = false },
                 onMarkMyLocation = { onAddNew(); fabExpanded = false }
@@ -162,7 +140,6 @@ private fun SpeedDialFab(
     expanded: Boolean,
     onToggle: () -> Unit,
     onSearch: () -> Unit,
-    onRally: () -> Unit,
     onRecordTrail: () -> Unit,
     onMarkOnMap: () -> Unit,
     onMarkMyLocation: () -> Unit
@@ -171,8 +148,6 @@ private fun SpeedDialFab(
         AnimatedVisibility(visible = expanded, enter = fadeIn(), exit = fadeOut()) {
             Column(horizontalAlignment = Alignment.End) {
                 SpeedDialAction("Search", Icons.Filled.Search, onSearch)
-                Spacer(Modifier.height(10.dp))
-                SpeedDialAction("Start or join a Rally", Icons.Filled.Groups, onRally, badge = "BETA")
                 Spacer(Modifier.height(10.dp))
                 SpeedDialAction("Record trail", Icons.Filled.Route, onRecordTrail)
                 Spacer(Modifier.height(10.dp))
@@ -192,7 +167,7 @@ private fun SpeedDialFab(
 }
 
 @Composable
-private fun SpeedDialAction(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit, badge: String? = null) {
+private fun SpeedDialAction(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Surface(
             color = MaterialTheme.colorScheme.surface,
@@ -204,12 +179,6 @@ private fun SpeedDialAction(label: String, icon: androidx.compose.ui.graphics.ve
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(label, fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurface)
-                if (badge != null) {
-                    Spacer(Modifier.width(6.dp))
-                    Surface(color = MaterialTheme.colorScheme.error, shape = RoundedCornerShape(6.dp)) {
-                        Text(badge, fontSize = 9.sp, color = MaterialTheme.colorScheme.onError, modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp))
-                    }
-                }
             }
         }
         Spacer(Modifier.width(10.dp))

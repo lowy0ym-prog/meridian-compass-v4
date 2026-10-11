@@ -1,11 +1,12 @@
 package com.meridian.compass.ui.screens
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import androidx.compose.foundation.background
+import android.webkit.WebViewClient
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -33,13 +34,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -63,6 +64,16 @@ fun MarkOnMapScreen(
     var isDark by remember { mutableStateOf(true) }
     var isTopo by remember { mutableStateOf(false) }
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
+    var pageLoaded by remember { mutableStateOf(false) }
+    var mapError by remember { mutableStateOf<String?>(null) }
+    var recentered by remember { mutableStateOf(currentLat != null) }
+
+    LaunchedEffect(currentLat, currentLon, pageLoaded) {
+        if (!recentered && pageLoaded && currentLat != null && currentLon != null) {
+            recentered = true
+            webViewRef?.evaluateJavascript("if (window.map) { map.setView([$currentLat, $currentLon], 17); }", null)
+        }
+    }
 
     val distanceMeters = if (currentLat != null && currentLon != null) {
         Bearing.distanceMeters(currentLat, currentLon, centerLat, centerLon)
@@ -75,6 +86,14 @@ fun MarkOnMapScreen(
                 WebView(context).apply {
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
+                    webViewClient = object : WebViewClient() {
+                        override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                            pageLoaded = false
+                        }
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            pageLoaded = true
+                        }
+                    }
                     addJavascriptInterface(
                         object {
                             @JavascriptInterface
@@ -83,6 +102,11 @@ fun MarkOnMapScreen(
                                     centerLat = lat
                                     centerLon = lon
                                 }
+                            }
+
+                            @JavascriptInterface
+                            fun onMapError(message: String) {
+                                Handler(Looper.getMainLooper()).post { mapError = message }
                             }
                         },
                         "Android"
@@ -147,6 +171,31 @@ fun MarkOnMapScreen(
                         modifier = Modifier.size(44.dp),
                         containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)
                     ) { Icon(Icons.Filled.Layers, contentDescription = "Toggle map layer", modifier = Modifier.size(18.dp)) }
+                    Spacer(Modifier.height(8.dp))
+                    FloatingActionButton(
+                        onClick = {
+                            if (currentLat != null && currentLon != null) {
+                                webViewRef?.evaluateJavascript("if (window.map) { map.setView([$currentLat, $currentLon], 17); }", null)
+                            }
+                        },
+                        modifier = Modifier.size(44.dp),
+                        containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)
+                    ) { Icon(Icons.Filled.MyLocation, contentDescription = "My location", modifier = Modifier.size(18.dp)) }
+                }
+            }
+
+            if (mapError != null) {
+                Spacer(Modifier.height(8.dp))
+                Surface(
+                    color = MaterialTheme.colorScheme.error.copy(alpha = 0.92f),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Text(
+                        mapError ?: "",
+                        modifier = Modifier.padding(12.dp),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onError
+                    )
                 }
             }
 
@@ -218,12 +267,21 @@ private fun buildMapHtml(lat: Double, lon: Double, dark: Boolean, topo: Boolean)
         <div id="map"></div>
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
         <script>
-          var map = L.map('map', {zoomControl:false, attributionControl:false}).setView([$lat, $lon], 17);
-          L.tileLayer('$tileUrl', { maxZoom: 19 }).addTo(map);
-          map.on('moveend', function() {
-            var c = map.getCenter();
-            if (window.Android) { Android.onCenterChanged(c.lat, c.lng); }
-          });
+          if (typeof L === 'undefined') {
+            if (window.Android) { Android.onMapError('Map could not load. It needs an internet connection the first time.'); }
+          } else {
+            var map = L.map('map', {zoomControl:false, attributionControl:false}).setView([$lat, $lon], 17);
+            var tiles = L.tileLayer('$tileUrl', { maxZoom: 19 }).addTo(map);
+            var tileErrors = 0;
+            tiles.on('tileerror', function() {
+              tileErrors++;
+              if (tileErrors === 6 && window.Android) { Android.onMapError('Map tiles are not loading. Check your internet connection.'); }
+            });
+            map.on('moveend', function() {
+              var c = map.getCenter();
+              if (window.Android) { Android.onCenterChanged(c.lat, c.lng); }
+            });
+          }
         </script>
         </body></html>
     """.trimIndent()

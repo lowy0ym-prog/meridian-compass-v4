@@ -10,7 +10,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Build
-import android.os.Bundle
 import android.os.Looper
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,7 +67,9 @@ class LocationRepository(private val context: Context) {
 
     @SuppressLint("MissingPermission")
     fun locationUpdates() = callbackFlow<LocationState> {
-        val listener = LocationListener { location -> emitLocation(location) }
+        val listener = LocationListener { location ->
+            trySend(emitLocation(location))
+        }
 
         val candidateProviders = buildList {
             add(LocationManager.GPS_PROVIDER)
@@ -91,7 +92,7 @@ class LocationRepository(private val context: Context) {
         registeredProviders
             .mapNotNull { provider -> runCatching { locationManager.getLastKnownLocation(provider) }.getOrNull() }
             .maxByOrNull { it.time }
-            ?.let { emitLocation(it) }
+            ?.let { trySend(emitLocation(it)) }
 
         awaitClose { locationManager.removeUpdates(listener) }
     }
@@ -102,7 +103,7 @@ class LocationRepository(private val context: Context) {
         false
     }
 
-    private fun emitLocation(location: Location) {
+    private fun emitLocation(location: Location): LocationState {
         val updated = _state.value.copy(
             latitude = location.latitude,
             longitude = location.longitude,
@@ -112,5 +113,6 @@ class LocationRepository(private val context: Context) {
             activeProvider = location.provider
         )
         _state.value = updated
+        return updated
     }
 }

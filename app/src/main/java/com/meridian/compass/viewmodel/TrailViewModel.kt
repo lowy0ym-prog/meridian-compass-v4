@@ -43,18 +43,24 @@ class TrailViewModel(application: Application) : AndroidViewModel(application) {
 
             collectJob = viewModelScope.launch {
                 locationRepository.locationUpdates().collect { loc ->
-                    if (loc.latitude == null || loc.longitude == null) return@collect
+                    val lat = loc.latitude ?: return@collect
+                    val lon = loc.longitude ?: return@collect
                     val trail = _activeTrail.value ?: return@collect
-                    val point = TrailPoint(
-                        trailId = trail.id, latitude = loc.latitude, longitude = loc.longitude,
-                        altitudeMeters = loc.bestAltitudeMeters
-                    )
+                    val acc = loc.horizontalAccuracyMeters
+                    // Ignore very poor fixes
+                    if (acc != null && acc > 50f) return@collect
+
                     val previous = _recordedPoints.value.lastOrNull()
                     if (previous != null) {
-                        _distanceMeters.value += Bearing.distanceMeters(
-                            previous.latitude, previous.longitude, point.latitude, point.longitude
-                        )
+                        val step = Bearing.distanceMeters(previous.latitude, previous.longitude, lat, lon)
+                        val minStep = maxOf(3.0, (acc ?: 0f).toDouble().coerceAtMost(15.0))
+                        if (step < minStep) return@collect
+                        _distanceMeters.value += step
                     }
+                    val point = TrailPoint(
+                        trailId = trail.id, latitude = lat, longitude = lon,
+                        altitudeMeters = loc.bestAltitudeMeters
+                    )
                     _recordedPoints.value = _recordedPoints.value + point
                     app.trailRepository.addPoint(trail.id, point.latitude, point.longitude, point.altitudeMeters)
                 }
