@@ -72,6 +72,9 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
+    // Leaflet map library, packaged inside the app so the map screen does not depend on a CDN.
+    implementation("org.webjars.npm:leaflet:1.9.4")
+
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
