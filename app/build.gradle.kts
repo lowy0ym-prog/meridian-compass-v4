@@ -65,15 +65,13 @@ dependencies {
     // Location is provided by Android's own android.location.LocationManager (see
     // location/LocationRepository.kt) — deliberately NOT play-services-location, so the app
     // has zero Google Play Services dependency and works on devices without GMS installed.
+    // The map is drawn natively (ui/map/SlippyMap.kt); map tiles are fetched only when online.
 
     implementation("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
 
     implementation("androidx.datastore:datastore-preferences:1.1.1")
-
-    // Leaflet map library, packaged inside the app so the map screen does not depend on a CDN.
-    implementation("org.webjars.npm:leaflet:1.9.4")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

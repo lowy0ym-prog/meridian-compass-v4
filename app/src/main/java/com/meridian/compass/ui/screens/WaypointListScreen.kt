@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Timeline
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -63,6 +64,7 @@ fun WaypointListScreen(
     onAddNew: () -> Unit,
     onMarkOnMap: () -> Unit,
     onRecordTrail: () -> Unit,
+    onOpenTrails: () -> Unit,
     onEdit: (Waypoint) -> Unit,
     onDelete: (Waypoint) -> Unit,
     onSelect: (Waypoint) -> Unit
@@ -91,6 +93,7 @@ fun WaypointListScreen(
                 onToggle = { fabExpanded = !fabExpanded },
                 onSearch = { searchOpen = !searchOpen; fabExpanded = false },
                 onRecordTrail = { onRecordTrail(); fabExpanded = false },
+                onOpenTrails = { onOpenTrails(); fabExpanded = false },
                 onMarkOnMap = { onMarkOnMap(); fabExpanded = false },
                 onMarkMyLocation = { onAddNew(); fabExpanded = false }
             )
@@ -141,6 +144,7 @@ private fun SpeedDialFab(
     onToggle: () -> Unit,
     onSearch: () -> Unit,
     onRecordTrail: () -> Unit,
+    onOpenTrails: () -> Unit,
     onMarkOnMap: () -> Unit,
     onMarkMyLocation: () -> Unit
 ) {
@@ -148,6 +152,8 @@ private fun SpeedDialFab(
         AnimatedVisibility(visible = expanded, enter = fadeIn(), exit = fadeOut()) {
             Column(horizontalAlignment = Alignment.End) {
                 SpeedDialAction("Search", Icons.Filled.Search, onSearch)
+                Spacer(Modifier.height(10.dp))
+                SpeedDialAction("Saved trails", Icons.Filled.Timeline, onOpenTrails)
                 Spacer(Modifier.height(10.dp))
                 SpeedDialAction("Record trail", Icons.Filled.Route, onRecordTrail)
                 Spacer(Modifier.height(10.dp))

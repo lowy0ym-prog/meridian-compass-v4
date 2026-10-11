@@ -26,11 +26,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.meridian.compass.settings.ThemePreference
+import com.meridian.compass.ui.map.MapMarker
 import com.meridian.compass.ui.screens.AddEditWaypointScreen
 import com.meridian.compass.ui.screens.CompassScreen
 import com.meridian.compass.ui.screens.MarkOnMapScreen
 import com.meridian.compass.ui.screens.RecordTrailScreen
 import com.meridian.compass.ui.screens.SettingsScreen
+import com.meridian.compass.ui.screens.TrailDetailScreen
+import com.meridian.compass.ui.screens.TrailsScreen
 import com.meridian.compass.ui.screens.WaypointListScreen
 import com.meridian.compass.ui.theme.AppThemeMode
 import com.meridian.compass.ui.theme.MeridianTheme
@@ -121,6 +124,7 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
 
     val uiState by compassViewModel.uiState.collectAsState()
     val waypoints by waypointViewModel.waypoints.collectAsState()
+    val trails by trailViewModel.trails.collectAsState()
     val app = androidx.compose.ui.platform.LocalContext.current.applicationContext as MeridianApplication
     val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
 
@@ -132,6 +136,11 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
 
     var editingWaypointId by remember { mutableStateOf<Long?>(null) }
     var pendingPickedLocation by remember { mutableStateOf<Pair<Double, Double>?>(null) }
+    var selectedTrailId by remember { mutableStateOf<Long?>(null) }
+
+    val waypointMarkers = remember(waypoints) {
+        waypoints.map { MapMarker(it.latitude, it.longitude, it.name) }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         NavHost(
@@ -171,6 +180,7 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
                     },
                     onMarkOnMap = { navController.navigate("markOnMap") },
                     onRecordTrail = { navController.navigate("recordTrail") },
+                    onOpenTrails = { navController.navigate("trails") },
                     onEdit = { wp ->
                         editingWaypointId = wp.id
                         pendingPickedLocation = null
@@ -187,6 +197,7 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
                 MarkOnMapScreen(
                     currentLat = uiState.location.latitude,
                     currentLon = uiState.location.longitude,
+                    markers = waypointMarkers,
                     onBack = { navController.popBackStack() },
                     onLocationPicked = { lat, lon ->
                         pendingPickedLocation = lat to lon
@@ -204,10 +215,46 @@ private fun AppNavHost(compassViewModel: CompassViewModel, waypointViewModel: Wa
                     points = points,
                     distanceMeters = distance,
                     distanceUnit = uiState.settings.distanceUnit,
+                    currentLat = uiState.location.latitude,
+                    currentLon = uiState.location.longitude,
+                    gpsAccuracyMeters = uiState.location.horizontalAccuracyMeters,
                     onBack = { navController.popBackStack() },
+                    onOpenTrails = { navController.navigate("trails") },
                     onStart = { name -> trailViewModel.startRecording(name) },
-                    onStop = { trailViewModel.stopAndSave(); navController.popBackStack() },
+                    onStop = {
+                        trailViewModel.stopAndSave()
+                        navController.navigate("trails") { popUpTo("recordTrail") { inclusive = true } }
+                    },
                     onDiscard = { trailViewModel.discard(); navController.popBackStack() }
+                )
+            }
+            composable("trails") {
+                TrailsScreen(
+                    trails = trails,
+                    distanceUnit = uiState.settings.distanceUnit,
+                    onBack = { navController.popBackStack() },
+                    onOpen = { trail ->
+                        selectedTrailId = trail.id
+                        navController.navigate("trailDetail")
+                    },
+                    onDelete = { trail -> trailViewModel.deleteTrail(trail) },
+                    onRecordNew = { navController.navigate("recordTrail") }
+                )
+            }
+            composable("trailDetail") {
+                val id = selectedTrailId
+                val trail = trails.find { it.id == id }
+                val pointsFlow = remember(id) { trailViewModel.pointsFor(id ?: -1L) }
+                val pts by pointsFlow.collectAsState(initial = emptyList())
+                TrailDetailScreen(
+                    trail = trail,
+                    points = pts,
+                    distanceUnit = uiState.settings.distanceUnit,
+                    onBack = { navController.popBackStack() },
+                    onDelete = {
+                        trail?.let { trailViewModel.deleteTrail(it) }
+                        navController.popBackStack()
+                    }
                 )
             }
             composable("waypointEdit") {
