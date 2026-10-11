@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Paint
 import android.util.LruCache
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -89,16 +88,16 @@ data class MapLine(
 )
 
 enum class MapStyle(val attribution: String, val dark: Boolean) {
-    STREET("© OpenStreetMap contributors", false),
-    TERRAIN("© OpenStreetMap contributors, SRTM | © OpenTopoMap", false),
+    STREET("© OpenStreetMap contributors © CARTO", false),
+    SATELLITE("Imagery © Esri, Maxar, Earthstar Geographics", true),
     DARK("© OpenStreetMap contributors © CARTO", true);
 
     fun url(z: Int, x: Int, y: Int): String = when (this) {
-        STREET -> "https://tile.openstreetmap.org/$z/$x/$y.png"
-        TERRAIN -> {
-            val s = listOf("a", "b", "c")[(x + y) % 3]
-            "https://$s.tile.opentopomap.org/$z/$x/$y.png"
+        STREET -> {
+            val s = listOf("a", "b", "c", "d")[(x + y) % 4]
+            "https://$s.basemaps.cartocdn.com/rastertiles/voyager/$z/$x/$y.png"
         }
+        SATELLITE -> "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/$z/$y/$x"
         DARK -> {
             val s = listOf("a", "b", "c", "d")[(x + y) % 4]
             "https://$s.basemaps.cartocdn.com/dark_all/$z/$x/$y.png"
@@ -106,8 +105,8 @@ enum class MapStyle(val attribution: String, val dark: Boolean) {
     }
 
     fun next(): MapStyle = when (this) {
-        STREET -> TERRAIN
-        TERRAIN -> DARK
+        STREET -> SATELLITE
+        SATELLITE -> DARK
         DARK -> STREET
     }
 }
@@ -173,7 +172,8 @@ internal object TileStore {
     @Volatile private var dir: File? = null
 
     fun init(cacheDir: File) {
-        dir = File(cacheDir, "map_tiles")
+        // v2: fresh folder so earlier blocked/placeholder tiles are never reused
+        dir = File(cacheDir, "map_tiles_v2")
     }
 
     private fun key(s: MapStyle, z: Int, x: Int, y: Int) = "${s.name}/$z/$x/$y"
